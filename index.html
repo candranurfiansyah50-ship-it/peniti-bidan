@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PENITI BIDAN - Puskesmas Pasongsongan</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS untuk Peta Interaktif -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 </head>
 <body class="bg-emerald-50/50 font-sans">
 
@@ -58,7 +60,7 @@
             <span class="text-xs font-bold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full uppercase tracking-wider">Formulir Pelaporan Resmi</span>
             <h2 class="text-2xl font-bold text-slate-800 mt-3 mb-2">Pendampingan Ibu Hamil Resti Oleh Bidan</h2>
             <p class="text-slate-600 text-sm leading-relaxed">
-                Silakan isi data diri, pilih wilayah domisili, ambil titik koordinat GPS, serta centang indikator faktor risiko tinggi utama sesuai kondisi ibu hamil di wilayah kerja <strong>Puskesmas Pasongsongan</strong>.
+                Silakan isi data diri, pilih wilayah domisili, tentukan titik koordinat GPS (ketik manual, ambil otomatis, atau buka peta interaktif), serta centang indikator faktor risiko tinggi utama sesuai kondisi ibu hamil di wilayah kerja <strong>Puskesmas Pasongsongan</strong>.
             </p>
         </div>
 
@@ -118,17 +120,23 @@
                     </div>
                 </div>
 
-                <!-- Bagian Titik Koordinat GPS -->
+                <!-- Bagian Titik Koordinat GPS & Tombol Pop-up Peta -->
                 <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-100 space-y-3">
                     <label class="block text-sm font-semibold text-slate-700">Titik Koordinat Lokasi / GPS Rumah</label>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="text" id="koordinatGPS" readonly placeholder="Belum ada titik koordinat" class="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-600 text-sm focus:outline-none">
-                        <button type="button" onclick="ambilLokasiGPS()" class="bg-emerald-800 hover:bg-emerald-900 text-white font-medium py-3 px-4 rounded-xl text-sm transition flex items-center justify-center space-x-2">
-                            <span>📍</span>
-                            <span>Ambil Koordinat GPS Saya</span>
-                        </button>
+                        <input type="text" id="koordinatGPS" placeholder="Contoh: -7.012345, 113.678901" class="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-600 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <button type="button" onclick="ambilLokasiGPS()" class="w-full bg-emerald-800 hover:bg-emerald-900 text-white font-medium py-3 px-3 rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                                <span>📍</span>
+                                <span>GPS Otomatis</span>
+                            </button>
+                            <button type="button" onclick="bukaModalPeta()" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-medium py-3 px-3 rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                                <span>🗺️</span>
+                                <span>Pilih dari Peta</span>
+                            </button>
+                        </div>
                     </div>
-                    <p class="text-xs text-slate-500">*Pastikan berada di lokasi rumah ibu hamil dan mengizinkan akses GPS pada browser HP.</p>
+                    <p class="text-xs text-slate-500">*Ketik manual, gunakan GPS otomatis, atau tekan tombol "Pilih dari Peta" untuk menentukan lokasi via peta interaktif.</p>
                 </div>
 
                 <hr class="border-slate-100">
@@ -213,6 +221,28 @@
         </div>
     </main>
 
+    <!-- Modal Pop-up Peta Interaktif -->
+    <div id="modalPeta" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-emerald-100">
+            <div class="flex justify-between items-center mb-3">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">Pilih Titik Lokasi Rumah</h3>
+                    <p class="text-xs text-slate-500">Geser atau klik pada peta untuk memilih titik koordinat</p>
+                </div>
+                <button type="button" onclick="tutupModalPeta()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+            </div>
+            
+            <!-- Elemen Peta di dalam Modal -->
+            <div id="map" class="w-full h-80 rounded-xl border border-slate-300 z-10 mb-4"></div>
+
+            <div class="flex justify-end space-x-3">
+                <button type="button" onclick="tutupModalPeta()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 px-6 rounded-xl transition text-sm shadow-md">
+                    Simpan & Tutup Peta
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Pop-up Konfirmasi Data -->
     <div id="modalKonfirmasi" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 md:p-8 shadow-2xl border border-emerald-100 max-h-[90vh] overflow-y-auto">
@@ -251,6 +281,9 @@
         &copy; 2026 PENITI BIDAN &bull; Puskesmas Pasongsongan.
     </footer>
 
+    <!-- Leaflet JS untuk Peta Interaktif -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     <script>
         function toggleMenu() {
             document.getElementById("hamburgerMenu").classList.toggle("hidden");
@@ -263,6 +296,55 @@
             }
         }
 
+        let map, marker;
+        let defaultLat = -6.8775;
+        let defaultLng = 113.5555;
+
+        function bukaModalPeta() {
+            document.getElementById("modalPeta").classList.remove("hidden");
+            
+            // Inisialisasi peta hanya sekali setelah modal terbuka agar ukurannya akurat
+            if (!map) {
+                map = L.map('map').setView([defaultLat, defaultLng], 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+
+                marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+
+                map.on('click', function(e) {
+                    const lat = e.latlng.lat;
+                    const lng = e.latlng.lng;
+                    marker.setLatLng([lat, lng]);
+                    document.getElementById("koordinatGPS").value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                });
+
+                marker.on('dragend', function(e) {
+                    const position = marker.getLatLng();
+                    document.getElementById("koordinatGPS").value = `${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}`;
+                });
+            } else {
+                map.invalidateSize(); // Memperbarui render peta saat modal muncul
+            }
+
+            // Jika sudah ada koordinat sebelumnya di input, arahkan marker ke sana
+            const val = document.getElementById("koordinatGPS").value;
+            const parts = val.split(',');
+            if (parts.length === 2) {
+                const lat = parseFloat(parts[0].trim());
+                const lng = parseFloat(parts[1].trim());
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    marker.setLatLng([lat, lng]);
+                    map.setView([lat, lng], 15);
+                }
+            }
+        }
+
+        function tutupModalPeta() {
+            document.getElementById("modalPeta").classList.add("hidden");
+        }
+
         function ambilLokasiGPS() {
             const inputGPS = document.getElementById("koordinatGPS");
             if (navigator.geolocation) {
@@ -272,15 +354,19 @@
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
                         inputGPS.value = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+                        if (marker && map) {
+                            marker.setLatLng([lat, lon]);
+                            map.setView([lat, lon], 16);
+                        }
                     },
                     (error) => {
-                        alert("Gagal mengambil lokasi. Pastikan izin GPS di HP Anda aktif.");
-                        inputGPS.value = "Gagal mendeteksi GPS";
+                        alert("Gagal mengambil lokasi otomatis. Anda dapat memasukkannya secara manual atau lewat peta.");
+                        inputGPS.value = "";
                     },
                     { enableHighAccuracy: true }
                 );
             } else {
-                alert("Browser Anda tidak mendukung fitur GPS.");
+                alert("Browser Anda tidak mendukung fitur GPS otomatis.");
             }
         }
 
@@ -327,7 +413,7 @@
             document.getElementById("outWilayah").innerText = `${dusun}, ${desa}`;
 
             const gps = document.getElementById("koordinatGPS").value;
-            document.getElementById("outGPS").innerText = gps ? gps : "Tidak diambil";
+            document.getElementById("outGPS").innerText = gps ? gps : "Tidak diisi";
 
             const checkboxes = document.querySelectorAll('input[name="risiko"]:checked');
             let listRisiko = [];
@@ -349,7 +435,7 @@
         function kirimFinal() {
             const laporanBaru = {
                 id: Date.now(),
-                tanggalInput: new Date().toISOString(), // Acuan waktu untuk menghitung usia kehamilan berjalan di dashboard login.html
+                tanggalInput: new Date().toISOString(),
                 nama: document.getElementById("nama").value,
                 nik: document.getElementById("nik").value,
                 telepon: document.getElementById("telepon").value,
@@ -357,7 +443,7 @@
                 usia_kehamilan_awal: parseInt(document.getElementById("usia_kehamilan").value),
                 desa: document.getElementById("pilihanDesa").value,
                 dusun: document.getElementById("pilihanDusun").value,
-                koordinatGPS: document.getElementById("koordinatGPS").value || "Tidak diambil",
+                koordinatGPS: document.getElementById("koordinatGPS").value || "Tidak diisi",
                 risiko: Array.from(document.querySelectorAll('input[name="risiko"]:checked')).map(cb => cb.value).join(", ") || "Tidak ada indikator dicentang",
                 catatan: document.getElementById("catatan").value || "-"
             };
@@ -371,6 +457,10 @@
             document.getElementById("formIbuHamil").reset();
             document.getElementById("pilihanDusun").innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
             document.getElementById("koordinatGPS").value = "";
+            if (marker && map) {
+                marker.setLatLng([defaultLat, defaultLng]);
+                map.setView([defaultLat, defaultLng], 12);
+            }
         }
     </script>
 </body>
