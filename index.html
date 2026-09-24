@@ -272,41 +272,45 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <!-- Modul Utama Firebase yang Terhubung Langsung ke Tombol Kirim -->
-    <script type="module">
-        import { db, collection, addDoc } from "./firebase-config.js";
+   <script type="module">
+    import { db, collection, addDoc } from "./firebase-config.js";
 
-        window.kirimFinal = async function() {
-            const laporanBaru = {
-                tanggalInput: new Date().toISOString(),
-                nama: document.getElementById("nama").value,
-                nik: document.getElementById("nik").value,
-                telepon: document.getElementById("telepon").value,
-                usia: document.getElementById("usia").value,
-                usia_kehamilan_awal: parseInt(document.getElementById("usia_kehamilan").value),
-                desa: document.getElementById("pilihanDesa").value,
-                dusun: document.getElementById("pilihanDusun").value,
-                koordinatGPS: document.getElementById("koordinatGPS").value || "Tidak diisi",
-                risiko: Array.from(document.querySelectorAll('input[name="risiko"]:checked')).map(cb => cb.value).join(", ") || "Tidak ada indikator dicentang",
-                catatan: document.getElementById("catatan").value || "-"
-            };
-
-            try {
-                await addDoc(collection(db, "laporanResti"), laporanBaru);
-                alert("Berhasil! Laporan data ibu hamil Resti telah disimpan ke Firebase Database.");
-                document.getElementById("modalKonfirmasi").classList.add("hidden");
-                document.getElementById("formIbuHamil").reset();
-                document.getElementById("pilihanDusun").innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
-                document.getElementById("koordinatGPS").value = "";
-                if (typeof marker !== 'undefined' && typeof map !== 'undefined' && marker && map) {
-                    marker.setLatLng([-6.8775, 113.5555]);
-                    map.setView([-6.8775, 113.5555], 12);
-                }
-            } catch (error) {
-                console.error("Gagal menyimpan ke Firebase: ", error);
-                alert("Gagal mengirim data ke database. Error: " + error.message);
-            }
+    // Menghubungkan fungsi kirimFinal secara global ke window
+    window.kirimFinal = async function() {
+        const laporanBaru = {
+            tanggalInput: new Date().toISOString(),
+            nama: document.getElementById("nama").value,
+            nik: document.getElementById("nik").value,
+            telepon: document.getElementById("telepon").value,
+            usia: document.getElementById("usia").value,
+            usia_kehamilan_awal: parseInt(document.getElementById("usia_kehamilan").value),
+            desa: document.getElementById("pilihanDesa").value,
+            dusun: document.getElementById("pilihanDusun").value,
+            koordinatGPS: document.getElementById("koordinatGPS").value || "Tidak diisi",
+            risiko: Array.from(document.querySelectorAll('input[name="risiko"]:checked')).map(cb => cb.value).join(", ") || "Tidak ada indikator dicentang",
+            catatan: document.getElementById("catatan").value || "-"
         };
-    </script>
+
+        try {
+            console.log("Mengirim data ke Firestore...", laporanBaru);
+            await addDoc(collection(db, "laporanResti"), laporanBaru);
+            
+            alert("Berhasil! Laporan data ibu hamil Resti telah disimpan ke Firebase Database.");
+            document.getElementById("modalKonfirmasi").classList.add("hidden");
+            document.getElementById("formIbuHamil").reset();
+            document.getElementById("pilihanDusun").innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
+            document.getElementById("koordinatGPS").value = "";
+            
+            if (typeof marker !== 'undefined' && typeof map !== 'undefined' && marker && map) {
+                marker.setLatLng([-6.8775, 113.5555]);
+                map.setView([-6.8775, 113.5555], 12);
+            }
+        } catch (error) {
+            console.error("Gagal menyimpan ke Firebase: ", error);
+            alert("Gagal mengirim data ke database. Error: " + error.message);
+        }
+    };
+</script>
 
     <script>
         function toggleMenu() {
