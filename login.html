@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Petugas - PENITI BIDAN</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN untuk Grafik -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-emerald-50/50 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header / Navbar -->
+    <header class="bg-emerald-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-3">
+                <div class="bg-white/10 p-2 rounded-xl text-2xl">🤰</div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-wide">PENITI BIDAN</h1>
+                    <p class="text-xs text-emerald-100">Puskesmas Pasongsongan</p>
+                </div>
+            </a>
+
+            <!-- Hamburger Button -->
+            <div class="relative">
+                <button onclick="toggleMenu()" class="bg-emerald-800 hover:bg-emerald-900 p-2.5 rounded-xl focus:outline-none flex items-center justify-center transition border border-emerald-600">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+
+                <!-- Dropdown Menu Hamburger -->
+                <div id="hamburgerMenu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-emerald-100 py-2 text-slate-700 z-50">
+                    <div class="px-4 py-2 border-b border-slate-100 mb-1">
+                        <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Menu Navigasi</p>
+                    </div>
+                    <a href="index.html" class="flex items-center space-x-2 px-4 py-2.5 text-sm hover:bg-emerald-50 text-slate-700 transition">
+                        <span>📝</span>
+                        <span>Formulir Laporan</span>
+                    </a>
+                    <a href="edukasi.html" class="flex items-center space-x-2 px-4 py-2.5 text-sm hover:bg-emerald-50 text-slate-700 transition">
+                        <span>📖</span>
+                        <span>Edukasi Kehamilan</span>
+                    </a>
+                    <a href="login.html" class="flex items-center space-x-2 px-4 py-2.5 text-sm bg-emerald-50 text-emerald-700 font-medium">
+                        <span>🔐</span>
+                        <span>Panel Petugas / Grafik</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto px-4 py-8 flex-grow w-full">
+        
+        <!-- BAGIAN 1: FORM LOGIN -->
+        <div id="sectionLogin" class="max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-emerald-100 p-8 mt-10">
+            <div class="text-center mb-6">
+                <span class="text-3xl">🔐</span>
+                <h3 class="text-2xl font-bold text-slate-800 mt-2">Login Petugas</h3>
+                <p class="text-xs text-slate-500 mt-1">Masukkan akun Bidan / Kader untuk melihat grafik rekapitulasi</p>
+            </div>
+            
+            <form onsubmit="prosesLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Username / NIP</label>
+                    <input type="text" id="username" required placeholder="Contoh: bidan123" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-sm transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Kata Sandi</label>
+                    <input type="password" id="password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-sm transition">
+                </div>
+                <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 px-4 rounded-xl text-sm transition shadow-lg shadow-emerald-700/25">
+                    Masuk ke Dashboard
+                </button>
+            </form>
+            <div class="mt-4 text-center">
+                <p class="text-xs text-slate-400">Petunjuk Simulasi: Masukkan username apa saja dan password <span class="font-semibold text-emerald-600">"admin123"</span></p>
+            </div>
+        </div>
+
+        <!-- BAGIAN 2: DASHBOARD GRAFIK RESTI -->
+        <div id="sectionDashboard" class="hidden space-y-6">
+            
+            <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 p-6 md:p-8 relative overflow-hidden">
+                <div class="absolute right-0 top-0 transform translate-x-4 -translate-y-4 opacity-5 pointer-events-none text-9xl">📊</div>
+                <span class="text-xs font-bold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full uppercase tracking-wider">Panel Petugas Puskesmas</span>
+                <h2 class="text-2xl font-bold text-slate-800 mt-3 mb-2">Grafik Rekapitulasi Ibu Hamil Resti</h2>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    Selamat datang kembali, Bidan. Usia kehamilan pasien dihitung dan diperbarui secara otomatis berjalan setiap minggunya hingga masa persalinan.
+                </p>
+            </div>
+
+            <!-- Statistik Total Kasus + Tombol Download -->
+            <div class="bg-white p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-4 w-full md:w-auto">
+                    <div class="bg-emerald-100 text-emerald-700 p-4 rounded-2xl text-3xl">👩‍🍼</div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Total Kasus Resti Terpantau</p>
+                        <h3 id="totalKasus" class="text-3xl font-bold text-slate-800">0 Orang</h3>
+                    </div>
+                </div>
+                
+                <button onclick="bukaModalDownload()" class="w-full md:w-auto bg-emerald-800 hover:bg-emerald-900 text-white font-medium py-3 px-5 rounded-xl text-sm transition shadow-md flex items-center justify-center space-x-2">
+                    <span>📥</span>
+                    <span>Download Data Kasus</span>
+                </button>
+            </div>
+
+            <!-- Bagian Grafik Chart.js -->
+            <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 p-6 md:p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-slate-800 text-lg">Grafik Sebaran Kasus Resti per Desa</h3>
+                    <span class="text-xs bg-emerald-50 text-emerald-700 font-medium px-3 py-1 rounded-lg border border-emerald-200">Sentuh Batang Grafik</span>
+                </div>
+                
+                <div class="relative w-full h-[350px]">
+                    <canvas id="grafikResti"></canvas>
+                </div>
+            </div>
+
+            <!-- Tombol Logout -->
+            <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 p-6 text-center">
+                <h4 class="font-semibold text-slate-800 text-sm mb-2">Sesi Aktif Petugas</h4>
+                <p class="text-xs text-slate-500 mb-4">Anda sedang masuk sebagai Administrator Bidan Puskesmas Pasongsongan.</p>
+                <button onclick="prosesLogout()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition shadow-md">
+                    Keluar Sesi (Logout)
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Modal Pop-up Rincian Data Desa -->
+    <div id="modalDetailDesa" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 md:p-8 shadow-2xl border border-emerald-100 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                <div>
+                    <span class="text-xs font-bold text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full uppercase">Rincian Wilayah</span>
+                    <h3 id="modalDesaTitle" class="text-xl font-bold text-slate-800 mt-1">Nama Desa</h3>
+                </div>
+                <button onclick="tutupModalDetail()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+            </div>
+
+            <div id="modalContentBody" class="space-y-3 mb-6">
+                <!-- Data detail pasien -->
+            </div>
+
+            <button type="button" onclick="tutupModalDetail()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 rounded-xl transition text-sm">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Pop-up Pilihan Download Data -->
+    <div id="modalDownload" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-emerald-100">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                <div class="flex items-center space-x-2">
+                    <span class="text-2xl">📥</span>
+                    <h3 class="text-lg font-bold text-slate-800">Unduh Laporan Kasus</h3>
+                </div>
+                <button onclick="tutupModalDownload()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+            </div>
+
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Kategori Unduhan:</label>
+                    <select id="pilihanKategoriDownload" onchange="cekOpsiDesa()" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="semua">Semua Desa (Seluruh Wilayah)</option>
+                        <option value="perdesa">Per Desa (Pilih Spesifik)</option>
+                    </select>
+                </div>
+
+                <div id="wrapperPilihDesa" class="hidden">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Desa:</label>
+                    <select id="dropdownDesaDownload" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="DESA CAMPAKA">DESA CAMPAKA</option>
+                        <option value="DESA LEBENG TIMUR">DESA LEBENG TIMUR</option>
+                        <option value="DESA LEBENG BARAT">DESA LEBENG BARAT</option>
+                        <option value="DESA MONTORNA">DESA MONTORNA</option>
+                        <option value="DESA PADANGDANGAN">DESA PADANGDANGAN</option>
+                        <option value="DESA PANAONGAN">DESA PANAONGAN</option>
+                        <option value="DESA PASONGSONGAN">DESA PASONGSONGAN</option>
+                        <option value="DESA PRANCAK">DESA PRANCAK</option>
+                        <option value="DESA RAJUN">DESA RAJUN</option>
+                        <option value="DESA SODDARA">DESA SODDARA</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex space-x-3">
+                <button type="button" onclick="tutupModalDownload()" class="w-1/2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 rounded-xl transition text-sm">
+                    Batal
+                </button>
+                <button type="button" onclick="eksekusiDownload()" class="w-1/2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 rounded-xl transition text-sm shadow-md">
+                    Download File
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-6 text-slate-500 text-xs">
+        &copy; 2026 PENITI BIDAN &bull; Puskesmas Pasongsongan.
+    </footer>
+
+    <!-- Script Logika Perhitungan Otomatis Usia Kehamilan -->
+    <script>
+        function toggleMenu() {
+            document.getElementById("hamburgerMenu").classList.toggle("hidden");
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('button')) {
+                const menu = document.getElementById("hamburgerMenu");
+                if (menu && !menu.classList.contains('hidden')) menu.classList.add('hidden');
+            }
+        }
+
+        function hitungUsiaKehamilanBerjalan(item) {
+            if (!item.tanggalInput || !item.usia_kehamilan_awal) {
+                return { teks: item.usia_kehamilan_awal + " Minggu", statusLahir: false };
+            }
+
+            const tglInput = new Date(item.tanggalInput);
+            const tglSekarang = new Date();
+            
+            // Selisih waktu dalam milidetik diubah ke minggu
+            const selisihMilidetik = tglSekarang - tglInput;
+            const mingguBerjalan = Math.floor(selisihMilidetik / (1000 * 60 * 60 * 24 * 7));
+            
+            let totalUsiaMinggu = item.usia_kehamilan_awal + mingguBerjalan;
+
+            if (totalUsiaMinggu >= 40) {
+                return { teks: "✨ Telah Lahir (≥ 40 Minggu)", statusLahir: true, mingguAktif: totalUsiaMinggu };
+            } else {
+                return { teks: totalUsiaMinggu + " Minggu Berjalan", statusLahir: false, mingguAktif: totalUsiaMinggu };
+            }
+        }
+
+        function ambilDataLaporan() {
+            let data = localStorage.getItem('laporanRestiPuskesmas');
+            if (!data) {
+                return [
+                    { id: 1, tanggalInput: "2026-01-01T00:00:00.000Z", nama: "Siti Aminah", nik: "3529012345670001", telepon: "081234567890", usia: 36, usia_kehamilan_awal: 24, desa: "DESA PASONGSONGAN", dusun: "Dusun Lebak", koordinatGPS: "-6.8712, 113.6543", risiko: "1. Usia Ibu, 5. Kondisi Medis Ibu", catatan: "Tekanan darah cenderung tinggi" }
+                ];
+            }
+            return JSON.parse(data);
+        }
+
+        function prosesLogin(event) {
+            event.preventDefault();
+            const pass = document.getElementById("password").value;
+
+            if (pass === "admin123") {
+                alert("Login Berhasil! Selamat datang di Panel Dashboard Bidan.");
+                document.getElementById("sectionLogin").classList.add("hidden");
+                document.getElementById("sectionDashboard").classList.remove("hidden");
+                muatDashboard();
+            } else {
+                alert("Kata sandi salah! Gunakan sandi simulasi: admin123");
+            }
+        }
+
+        function prosesLogout() {
+            alert("Anda telah keluar dari sesi.");
+            document.getElementById("sectionDashboard").classList.add("hidden");
+            document.getElementById("sectionLogin").classList.remove("hidden");
+            document.getElementById("password").value = "";
+        }
+
+        let myChart = null;
+        const daftarDesaResmi = [
+            "DESA CAMPAKA", "DESA LEBENG TIMUR", "DESA LEBENG BARAT", 
+            "DESA MONTORNA", "DESA PADANGDANGAN", "DESA PANAONGAN", 
+            "DESA PASONGSONGAN", "DESA PRANCAK", "DESA RAJUN", "DESA SODDARA"
+        ];
+
+        function muatDashboard() {
+            const semuaLaporan = ambilDataLaporan();
+            document.getElementById("totalKasus").innerText = semuaLaporan.length + " Orang";
+
+            let hitungPerDesa = {};
+            daftarDesaResmi.forEach(desa => { hitungPerDesa[desa] = 0; });
+            semuaLaporan.forEach(item => {
+                if (hitungPerDesa[item.desa] !== undefined) {
+                    hitungPerDesa[item.desa]++;
+                }
+            });
+
+            let dataGrafik = daftarDesaResmi.map(desa => hitungPerDesa[desa]);
+
+            const ctx = document.getElementById('grafikResti').getContext('2d');
+            if (myChart) myChart.destroy();
+
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Campaka', 'Lebeng Tim.', 'Lebeng Bar.', 'Montorna', 'Padangdangan', 'Panaongan', 'Pasongsongan', 'Prancak', 'Rajun', 'Soddara'],
+                    datasets: [{
+                        label: 'Jumlah Ibu Hamil Resti (Orang)',
+                        data: dataGrafik,
+                        backgroundColor: 'rgba(5, 150, 105, 0.8)',
+                        borderColor: 'rgba(4, 120, 87, 1)',
+                        borderWidth: 1,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const indexIndeks = elements[0].index;
+                            tampilkanDetailDesa(daftarDesaResmi[indexIndeks], semuaLaporan);
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true, position: 'top' }
+                    }
+                }
+            });
+        }
+
+        function tampilkanDetailDesa(namaDesaResmi, semuaLaporan) {
+            document.getElementById("modalDesaTitle").innerText = namaDesaResmi;
+            const bodyContainer = document.getElementById("modalContentBody");
+            bodyContainer.innerHTML = "";
+
+            const dataFilter = semuaLaporan.filter(item => item.desa === namaDesaResmi);
+
+            if (dataFilter.length === 0) {
+                bodyContainer.innerHTML = `<p class="text-sm text-slate-500 text-center py-4">Belum ada data laporan ibu hamil Resti untuk desa ini.</p>`;
+            } else {
+                dataFilter.forEach((pasien, idx) => {
+                    const infoKehamilan = hitungUsiaKehamilanBerjalan(pasien);
+                    
+                    let warnaStatus = infoKehamilan.statusLahir ? "bg-rose-100 text-rose-800 border-rose-300" : "bg-emerald-200 text-emerald-800";
+                    let teksStatusLabel = infoKehamilan.statusLahir ? "STATUS: TELAH LAHIR 👶" : "USIA KEHAMILAN BERJALAN";
+
+                    bodyContainer.innerHTML += `
+                        <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 space-y-1.5 text-sm text-slate-700">
+                            <div class="flex justify-between items-center font-bold text-emerald-900 border-b border-emerald-200/60 pb-1">
+                                <span>#${idx + 1}. ${pasien.nama}</span>
+                                <span class="text-xs bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded-full">${pasien.dusun}</span>
+                            </div>
+                            <p><strong>NIK:</strong> ${pasien.nik}</p>
+                            <p><strong>No Telp/WA:</strong> ${pasien.telepon}</p>
+                            <p><strong>Usia Ibu:</strong> ${pasien.usia} Tahun</p>
+                            <p><strong>${teksStatusLabel}:</strong> <span class="font-semibold px-2 py-0.5 rounded-lg border ${warnaStatus}">${infoKehamilan.teks}</span></p>
+                            <p><strong>Koordinat GPS:</strong> <a href="https://maps.google.com/?q=${pasien.koordinatGPS}" target="_blank" class="text-emerald-700 underline">${pasien.koordinatGPS} (Buka Peta)</a></p>
+                            <p><strong>Faktor Risiko:</strong> <span class="text-rose-700 font-medium">${pasien.risiko}</span></p>
+                            <p><strong>Catatan:</strong> ${pasien.catatan || '-'}</p>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById("modalDetailDesa").classList.remove("hidden");
+        }
+
+        function tutupModalDetail() {
+            document.getElementById("modalDetailDesa").classList.add("hidden");
+        }
+
+        function bukaModalDownload() {
+            document.getElementById("modalDownload").classList.remove("hidden");
+        }
+
+        function tutupModalDownload() {
+            document.getElementById("modalDownload").classList.add("hidden");
+        }
+
+        function cekOpsiDesa() {
+            const kategori = document.getElementById("pilihanKategoriDownload").value;
+            const wrapperDesa = document.getElementById("wrapperPilihDesa");
+            if (kategori === "perdesa") {
+                wrapperDesa.classList.remove("hidden");
+            } else {
+                wrapperDesa.classList.add("hidden");
+            }
+        }
+
+        function eksekusiDownload() {
+            const semuaLaporan = ambilDataLaporan();
+            const kategori = document.getElementById("pilihanKategoriDownload").value;
+            
+            let dataExport = semuaLaporan;
+            let namaFile = "Laporan_Semua_Desa_Resti.csv";
+
+            if (kategori === "perdesa") {
+                const desaPilihan = document.getElementById("dropdownDesaDownload").value;
+                dataExport = semuaLaporan.filter(item => item.desa === desaPilihan);
+                namaFile = `Laporan_${desaPilihan.replace(/ /g, "_")}.csv`;
+            }
+
+            if (dataExport.length === 0) {
+                alert("Tidak ada data laporan untuk diunduh pada kategori ini.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,No,Nama Ibu,NIK,Telepon,Usia,Usia Kehamilan Berjalan,Status Lahir,Desa,Dusun,Koordinat GPS,Faktor Risiko,Catatan\r\n";
+            
+            dataExport.forEach((row, index) => {
+                const infoK = hitungUsiaKehamilanBerjalan(row);
+                let baris = [
+                    index + 1,
+                    `"${row.nama}"`,
+                    `"${row.nik}"`,
+                    `"${row.telepon}"`,
+                    row.usia,
+                    `"${infoK.teks}"`,
+                    infoK.statusLahir ? "Lahir" : "Dalam Pemantauan",
+                    `"${row.desa}"`,
+                    `"${row.dusun}"`,
+                    `"${row.koordinatGPS}"`,
+                    `"${row.risiko}"`,
+                    `"${row.catatan || '-'}"`
+                ];
+                csvContent += baris.join(",") + "\r\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", namaFile);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            tutupModalDownload();
+            alert("File laporan berhasil diunduh!");
+        }
+    </script>
+</body>
+</html>

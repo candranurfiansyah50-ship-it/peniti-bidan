@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PENITI BIDAN - Puskesmas Pasongsongan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-emerald-50/50 font-sans">
+
+    <!-- Header / Navbar -->
+    <header class="bg-emerald-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-3">
+                <div class="bg-white/10 p-2 rounded-xl text-2xl">🤰</div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-wide">PENITI BIDAN</h1>
+                    <p class="text-xs text-emerald-100">Puskesmas Pasongsongan</p>
+                </div>
+            </a>
+
+            <!-- Hamburger Button -->
+            <div class="relative">
+                <button onclick="toggleMenu()" class="bg-emerald-800 hover:bg-emerald-900 p-2.5 rounded-xl focus:outline-none flex items-center justify-center transition border border-emerald-600">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+
+                <!-- Dropdown Menu Hamburger -->
+                <div id="hamburgerMenu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-emerald-100 py-2 text-slate-700 z-50">
+                    <div class="px-4 py-2 border-b border-slate-100 mb-1">
+                        <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Menu Navigasi</p>
+                    </div>
+                    <a href="index.html" class="flex items-center space-x-2 px-4 py-2.5 text-sm bg-emerald-50 text-emerald-700 font-medium">
+                        <span>📝</span>
+                        <span>Formulir Laporan</span>
+                    </a>
+                    <a href="edukasi.html" class="flex items-center space-x-2 px-4 py-2.5 text-sm hover:bg-emerald-50 text-slate-700 transition">
+                        <span>📖</span>
+                        <span>Edukasi Kehamilan</span>
+                    </a>
+                    <a href="login.html" class="flex items-center space-x-2 px-4 py-2.5 text-sm hover:bg-emerald-50 text-slate-700 transition">
+                        <span>🔐</span>
+                        <span>Panel Petugas / Grafik</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        
+        <!-- Welcome Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 p-6 md:p-8 mb-6 relative overflow-hidden">
+            <div class="absolute right-0 top-0 transform translate-x-4 -translate-y-4 opacity-5 pointer-events-none text-9xl">👶</div>
+            <span class="text-xs font-bold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full uppercase tracking-wider">Formulir Pelaporan Resmi</span>
+            <h2 class="text-2xl font-bold text-slate-800 mt-3 mb-2">Pendampingan Ibu Hamil Resti Oleh Bidan</h2>
+            <p class="text-slate-600 text-sm leading-relaxed">
+                Silakan isi data diri, pilih wilayah domisili, ambil titik koordinat GPS, serta centang indikator faktor risiko tinggi utama sesuai kondisi ibu hamil di wilayah kerja <strong>Puskesmas Pasongsongan</strong>.
+            </p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 p-6 md:p-8 mb-8">
+            <form id="formIbuHamil" onsubmit="bukaKonfirmasi(event)" class="space-y-6">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Nama Lengkap Ibu Hamil</label>
+                        <input type="text" id="nama" required placeholder="Contoh: Siti Aminah" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">NIK (Nomor Induk Kependudukan)</label>
+                        <input type="text" id="nik" required placeholder="16 digit NIK" maxlength="16" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Nomor Telepon / WhatsApp</label>
+                        <input type="tel" id="telepon" required placeholder="Contoh: 081234567890" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Usia (Tahun)</label>
+                        <input type="number" id="usia" required placeholder="Contoh: 35" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Usia Kehamilan (Minggu)</label>
+                    <input type="number" id="usia_kehamilan" required placeholder="Contoh: 20" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Pilih Desa</label>
+                        <select id="pilihanDesa" onchange="updateDusun()" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                            <option value="">-- Pilih Desa --</option>
+                            <option value="DESA CAMPAKA">DESA CAMPAKA</option>
+                            <option value="DESA LEBENG TIMUR">DESA LEBENG TIMUR</option>
+                            <option value="DESA LEBENG BARAT">DESA LEBENG BARAT</option>
+                            <option value="DESA MONTORNA">DESA MONTORNA</option>
+                            <option value="DESA PADANGDANGAN">DESA PADANGDANGAN</option>
+                            <option value="DESA PANAONGAN">DESA PANAONGAN</option>
+                            <option value="DESA PASONGSONGAN">DESA PASONGSONGAN</option>
+                            <option value="DESA PRANCAK">DESA PRANCAK</option>
+                            <option value="DESA RAJUN">DESA RAJUN</option>
+                            <option value="DESA SODDARA">DESA SODDARA</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Pilih Dusun</label>
+                        <select id="pilihanDusun" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                            <option value="">-- Pilih Desa Terlebih Dahulu --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Bagian Titik Koordinat GPS -->
+                <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-100 space-y-3">
+                    <label class="block text-sm font-semibold text-slate-700">Titik Koordinat Lokasi / GPS Rumah</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" id="koordinatGPS" readonly placeholder="Belum ada titik koordinat" class="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-600 text-sm focus:outline-none">
+                        <button type="button" onclick="ambilLokasiGPS()" class="bg-emerald-800 hover:bg-emerald-900 text-white font-medium py-3 px-4 rounded-xl text-sm transition flex items-center justify-center space-x-2">
+                            <span>📍</span>
+                            <span>Ambil Koordinat GPS Saya</span>
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-500">*Pastikan berada di lokasi rumah ibu hamil dan mengizinkan akses GPS pada browser HP.</p>
+                </div>
+
+                <hr class="border-slate-100">
+
+                <!-- Indikator Risiko Tinggi (Resti) -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-3">Indikator / Faktor Risiko Utama Ibu Hamil RESTI (Centang poin inti yang sesuai):</label>
+                    
+                    <div class="space-y-4 bg-emerald-50/40 p-4 rounded-xl border border-emerald-100 text-sm text-slate-700">
+                        
+                        <label class="flex items-start space-x-3 cursor-pointer bg-white p-3 rounded-xl border border-emerald-100 shadow-sm">
+                            <input type="checkbox" name="risiko" value="1. Usia Ibu (<20 tahun atau ≥35 tahun)" class="w-4 h-4 text-emerald-600 rounded mt-0.5">
+                            <div>
+                                <span class="font-bold text-slate-800">1. Usia Ibu</span>
+                                <p class="text-xs text-slate-500 mt-0.5">Keterangan: Usia ibu &lt; 20 tahun atau &ge; 35 tahun.</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-start space-x-3 cursor-pointer bg-white p-3 rounded-xl border border-emerald-100 shadow-sm">
+                            <input type="checkbox" name="risiko" value="2. Paritas (Primigravida tertentu / Grandemultipara ≥5 anak)" class="w-4 h-4 text-emerald-600 rounded mt-0.5">
+                            <div>
+                                <span class="font-bold text-slate-800">2. Paritas</span>
+                                <p class="text-xs text-slate-500 mt-0.5">Keterangan: Primigravida tertentu atau Grandemultipara (misalnya &ge; 5 kali melahirkan).</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-start space-x-3 cursor-pointer bg-white p-3 rounded-xl border border-emerald-100 shadow-sm">
+                            <input type="checkbox" name="risiko" value="3. Jarak Kehamilan Terlalu Dekat (<2 tahun)" class="w-4 h-4 text-emerald-600 rounded mt-0.5">
+                            <div>
+                                <span class="font-bold text-slate-800">3. Jarak Kehamilan</span>
+                                <p class="text-xs text-slate-500 mt-0.5">Keterangan: Jarak kehamilan terlalu dekat, misalnya &lt; 2 tahun.</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-start space-x-3 cursor-pointer bg-white p-3 rounded-xl border border-emerald-100 shadow-sm">
+                            <input type="checkbox" name="risiko" value="4. Riwayat Obstetri Buruk (Keguguran berulang, bayi lahir mati, dll)" class="w-4 h-4 text-emerald-600 rounded mt-0.5">
+                            <div>
+                                <span class="font-bold text-slate-800">4. Riwayat Obstetri Buruk</span>
+                                <p class="text-xs text-slate-500 mt-0.5">Keterangan: Keguguran berulang, bayi lahir mati, kematian neonatal, persalinan prematur, atau perdarahan.</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-start space-x-3 cursor-pointer bg-white p-3 rounded-xl border border-emerald-100 shadow-sm">
+                            <input type="checkbox" name="risiko" value="5. Kondisi Medis Ibu (Hipertensi, Diabetes, Jantung, Anemia berat, dll)" class="w-4 h-4 text-emerald-600 rounded mt-0.5">
+                            <div>
+                                <span class="font-bold text-slate-800">5. Kondisi Medis Ibu</span>
+                                <p class="text-xs text-slate-500 mt-0.5">Keterangan: Hipertensi/preeklamsia, Diabetes, Penyakit jantung, Anemia berat, atau penyakit kronis.</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-start space-x-3 cursor-pointer bg-white p-3 rounded-xl border border-emerald-100 shadow-sm">
+                            <input type="checkbox" name="risiko" value="6. Komplikasi Kehamilan Sekarang (Perdarahan, Preeklamsia, Sungsang, dll)" class="w-4 h-4 text-emerald-600 rounded mt-0.5">
+                            <div>
+                                <span class="font-bold text-slate-800">6. Komplikasi pada Kehamilan Sekarang</span>
+                                <p class="text-xs text-slate-500 mt-0.5">Keterangan: Perdarahan, preeklamsia, ketuban pecah dini, kehamilan ganda, atau letak sungsang.</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-start space-x-3 cursor-pointer bg-white p-3 rounded-xl border border-emerald-100 shadow-sm">
+                            <input type="checkbox" name="risiko" value="7. Faktor Sosial dan Lainnya (Kekurangan gizi, akses terbatas, dll)" class="w-4 h-4 text-emerald-600 rounded mt-0.5">
+                            <div>
+                                <span class="font-bold text-slate-800">7. Faktor Sosial dan Lainnya</span>
+                                <p class="text-xs text-slate-500 mt-0.5">Keterangan: Kekurangan gizi, akses pelayanan kesehatan terbatas, atau faktor lingkungan.</p>
+                            </div>
+                        </label>
+
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Keluhan / Catatan Khusus (Opsional)</label>
+                    <textarea id="catatan" rows="3" placeholder="Tuliskan keluhan atau kondisi khusus..." class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition"></textarea>
+                </div>
+
+                <div>
+                    <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transition duration-200">
+                        Periksa & Kirim Laporan
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- Modal Pop-up Konfirmasi Data -->
+    <div id="modalKonfirmasi" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 md:p-8 shadow-2xl border border-emerald-100 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center space-x-3 mb-4">
+                <span class="text-3xl">🔍</span>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Konfirmasi Data Laporan</h3>
+                    <p class="text-xs text-slate-500">Mohon cek kembali sebelum data dikirim ke Puskesmas</p>
+                </div>
+            </div>
+
+            <div class="bg-emerald-50/60 rounded-xl p-4 border border-emerald-100 space-y-2 text-sm text-slate-700 mb-6">
+                <p><strong>Nama Ibu:</strong> <span id="outNama">-</span></p>
+                <p><strong>NIK:</strong> <span id="outNik">-</span></p>
+                <p><strong>No Telepon:</strong> <span id="outTelepon">-</span></p>
+                <p><strong>Usia:</strong> <span id="outUsia">-</span> Tahun</p>
+                <p><strong>Usia Kehamilan:</strong> <span id="outUsiaKehamilan">-</span> Minggu</p>
+                <p><strong>Wilayah:</strong> <span id="outWilayah">-</span></p>
+                <p><strong>Koordinat GPS:</strong> <span id="outGPS">-</span></p>
+                <p><strong>Faktor Risiko:</strong> <span id="outRisiko">-</span></p>
+                <p><strong>Catatan:</strong> <span id="outCatatan">-</span></p>
+            </div>
+
+            <div class="flex space-x-3">
+                <button type="button" onclick="tutupKonfirmasi()" class="w-1/2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 rounded-xl transition text-sm">
+                    Edit Kembali
+                </button>
+                <button type="button" onclick="kirimFinal()" class="w-1/2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg">
+                    Ya, Kirim Sekarang
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-6 text-slate-500 text-xs">
+        &copy; 2026 PENITI BIDAN &bull; Puskesmas Pasongsongan.
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById("hamburgerMenu").classList.toggle("hidden");
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('button')) {
+                const menu = document.getElementById("hamburgerMenu");
+                if (menu && !menu.classList.contains('hidden')) menu.classList.add('hidden');
+            }
+        }
+
+        function ambilLokasiGPS() {
+            const inputGPS = document.getElementById("koordinatGPS");
+            if (navigator.geolocation) {
+                inputGPS.value = "Mencari titik koordinat GPS...";
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        inputGPS.value = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+                    },
+                    (error) => {
+                        alert("Gagal mengambil lokasi. Pastikan izin GPS di HP Anda aktif.");
+                        inputGPS.value = "Gagal mendeteksi GPS";
+                    },
+                    { enableHighAccuracy: true }
+                );
+            } else {
+                alert("Browser Anda tidak mendukung fitur GPS.");
+            }
+        }
+
+        const dataDusun = {
+            "DESA CAMPAKA": ["Dusun Campaka", "Dusun Jampareng Daya", "Dusun Jampareng Laok", "Dusun Durbugan", "Dusun Sampurna", "Dusun Batabata"],
+            "DESA LEBENG TIMUR": ["Dusun Panyepen", "Dusun Billabagung Timur", "Dusun Billabagung Barat", "Dusun Andang", "Dusun Lempong", "Dusun Togah", "Dusun Legung", "Dusun Den Timur"],
+            "DESA LEBENG BARAT": ["Dusun Berorong", "Dusun Be'tello", "Dusun Pancor", "Dusun Andung", "Dusun Galuguran", "Dusun Kokembang", "Dusun Bertah"],
+            "DESA MONTORNA": ["Dusun Montorna", "Dusun Lenteng", "Dusun Tanggulun", "Dusun Delima", "Dusun Bengsoka", "Dusun Komis", "Dusun Berkongan", "Dusun Tanonggul"],
+            "DESA PADANGDANGAN": ["Dusun Malaka", "Dusun Dung Gadung", "Dusun Billa Mabuk", "Dusun Duwak Buter", "Dusun Teppoh", "Dusun Dabada"],
+            "DESA PANAONGAN": ["Dusun Benteng Utara", "Dusun Benteng Selatan", "Dusun Pangarangan", "Dusun Sumber Manis", "Dusun Cempaka", "Dusun Banasare", "Dusun Sumur Keramat"],
+            "DESA PASONGSONGAN": ["Dusun Lebak", "Dusun Morasen", "Dusun Pakotan", "Dusun Tolabeng", "Dusun Sempong Timur", "Dusun Sempong Barat"],
+            "DESA PRANCAK": ["Dusun Kembang Suka", "Dusun Tegal Barat", "Dusun Platokan", "Dusun Bilamabuk", "Dusun Pandian Daya", "Dusun Pandian Laok", "Dusun Pao Jajar", "Dusun Prancak"],
+            "DESA RAJUN": ["Dusun Maronggi", "Dusun Tengah", "Dusun Cenlecen", "Dusun Pakes"],
+            "DESA SODDARA": ["Dusun Paowan", "Dusun Sumber Pocok", "Dusun Sumber Oloh", "Dusun Serreh", "Dusun Langgulang", "Dusun Bungtrebung", "Dusun Gaber", "Dusun Panyepen"]
+        };
+
+        function updateDusun() {
+            const selectedDesa = document.getElementById("pilihanDesa").value;
+            const dropdownDusun = document.getElementById("pilihanDusun");
+            dropdownDusun.innerHTML = '<option value="">-- Pilih Dusun --</option>';
+            if (selectedDesa && dataDusun[selectedDesa]) {
+                dataDusun[selectedDesa].forEach(dusun => {
+                    const opt = document.createElement("option");
+                    opt.value = dusun;
+                    opt.textContent = dusun;
+                    dropdownDusun.appendChild(opt);
+                });
+            } else {
+                dropdownDusun.innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
+            }
+        }
+
+        function bukaKonfirmasi(event) {
+            event.preventDefault();
+
+            document.getElementById("outNama").innerText = document.getElementById("nama").value;
+            document.getElementById("outNik").innerText = document.getElementById("nik").value;
+            document.getElementById("outTelepon").innerText = document.getElementById("telepon").value;
+            document.getElementById("outUsia").innerText = document.getElementById("usia").value;
+            document.getElementById("outUsiaKehamilan").innerText = document.getElementById("usia_kehamilan").value;
+            
+            const desa = document.getElementById("pilihanDesa").value;
+            const dusun = document.getElementById("pilihanDusun").value;
+            document.getElementById("outWilayah").innerText = `${dusun}, ${desa}`;
+
+            const gps = document.getElementById("koordinatGPS").value;
+            document.getElementById("outGPS").innerText = gps ? gps : "Tidak diambil";
+
+            const checkboxes = document.querySelectorAll('input[name="risiko"]:checked');
+            let listRisiko = [];
+            checkboxes.forEach((cb) => {
+                listRisiko.push(cb.value);
+            });
+            document.getElementById("outRisiko").innerText = listRisiko.length > 0 ? listRisiko.join(", ") : "Tidak ada indikator dicentang";
+
+            const catatan = document.getElementById("catatan").value;
+            document.getElementById("outCatatan").innerText = catatan ? catatan : "-";
+
+            document.getElementById("modalKonfirmasi").classList.remove("hidden");
+        }
+
+        function tutupKonfirmasi() {
+            document.getElementById("modalKonfirmasi").classList.add("hidden");
+        }
+
+        function kirimFinal() {
+            const laporanBaru = {
+                id: Date.now(),
+                tanggalInput: new Date().toISOString(), // Acuan waktu untuk menghitung usia kehamilan berjalan di dashboard login.html
+                nama: document.getElementById("nama").value,
+                nik: document.getElementById("nik").value,
+                telepon: document.getElementById("telepon").value,
+                usia: document.getElementById("usia").value,
+                usia_kehamilan_awal: parseInt(document.getElementById("usia_kehamilan").value),
+                desa: document.getElementById("pilihanDesa").value,
+                dusun: document.getElementById("pilihanDusun").value,
+                koordinatGPS: document.getElementById("koordinatGPS").value || "Tidak diambil",
+                risiko: Array.from(document.querySelectorAll('input[name="risiko"]:checked')).map(cb => cb.value).join(", ") || "Tidak ada indikator dicentang",
+                catatan: document.getElementById("catatan").value || "-"
+            };
+
+            let daftarLaporan = JSON.parse(localStorage.getItem('laporanRestiPuskesmas')) || [];
+            daftarLaporan.unshift(laporanBaru);
+            localStorage.setItem('laporanRestiPuskesmas', JSON.stringify(daftarLaporan));
+
+            alert("Berhasil! Laporan data ibu hamil Resti beserta koordinat GPS telah disimpan dan dikirim ke sistem Puskesmas Pasongsongan.");
+            document.getElementById("modalKonfirmasi").classList.add("hidden");
+            document.getElementById("formIbuHamil").reset();
+            document.getElementById("pilihanDusun").innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
+            document.getElementById("koordinatGPS").value = "";
+        }
+    </script>
+</body>
+</html>
