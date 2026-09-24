@@ -13,7 +13,7 @@
     <!-- Header / Navbar -->
     <header class="bg-emerald-700 text-white shadow-lg sticky top-0 z-50">
         <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="index (7)_2.html" class="flex items-center space-x-3">
+            <a href="index.html" class="flex items-center space-x-3">
                 <div class="bg-white/10 p-2 rounded-xl text-2xl">🤰</div>
                 <div>
                     <h1 class="text-lg font-bold tracking-wide">PENITI BIDAN</h1>
@@ -34,7 +34,7 @@
                     <div class="px-4 py-2 border-b border-slate-100 mb-1">
                         <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Menu Navigasi</p>
                     </div>
-                    <a href="index (7)_2.html" class="flex items-center space-x-2 px-4 py-2.5 text-sm hover:bg-emerald-50 text-slate-700 transition">
+                    <a href="index.html" class="flex items-center space-x-2 px-4 py-2.5 text-sm hover:bg-emerald-50 text-slate-700 transition">
                         <span>📝</span>
                         <span>Formulir Laporan</span>
                     </a>
@@ -42,7 +42,7 @@
                         <span>📖</span>
                         <span>Edukasi Kehamilan</span>
                     </a>
-                    <a href="login_2.html" class="flex items-center space-x-2 px-4 py-2.5 text-sm bg-emerald-50 text-emerald-700 font-medium">
+                    <a href="login.html" class="flex items-center space-x-2 px-4 py-2.5 text-sm bg-emerald-50 text-emerald-700 font-medium">
                         <span>🔐</span>
                         <span>Panel Petugas / Grafik</span>
                     </a>
@@ -219,6 +219,40 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
+    <!-- Skrip Terpadu Pengambilan Data Firebase (Database Baru: penitibidan-8c3cb) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_9UYUl3gxS7up8AazbBj1HYMWIuIn6R0",
+            authDomain: "penitibidan-8c3cb.firebaseapp.com",
+            projectId: "penitibidan-8c3cb",
+            storageBucket: "penitibidan-8c3cb.firebasestorage.app",
+            messagingSenderId: "195377000185",
+            appId: "1:195377000185:web:f3cf9fefea2fff24af7c28",
+            measurementId: "G-DJ1RP57D2Q"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Definisikan fungsi ambilDataLaporan secara global agar bisa dipanggil fungsi dashboard
+        window.ambilDataLaporan = async function() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "laporanResti"));
+                let daftarLaporan = [];
+                querySnapshot.forEach((doc) => {
+                    daftarLaporan.push({ id: doc.id, ...doc.data() });
+                });
+                return daftarLaporan;
+            } catch (error) {
+                console.error("Gagal mengambil data dari Firebase: ", error);
+                return [];
+            }
+        };
+    </script>
+
     <script>
         function toggleMenu() {
             document.getElementById("hamburgerMenu").classList.toggle("hidden");
@@ -245,22 +279,6 @@
                 return { teks: "✨ Telah Lahir (≥ 40 Minggu)", statusLahir: true };
             } else {
                 return { teks: totalUsiaMinggu + " Minggu Berjalan", statusLahir: false };
-            }
-        }
-
-        // Ambil Data dari Firebase Firestore
-        async function ambilDataLaporan() {
-            try {
-                const { db, collection, getDocs } = await import('./firebase-config.js');
-                const querySnapshot = await getDocs(collection(db, "laporanResti"));
-                let daftarLaporan = [];
-                querySnapshot.forEach((doc) => {
-                    daftarLaporan.push({ id: doc.id, ...doc.data() });
-                });
-                return daftarLaporan;
-            } catch (error) {
-                console.error("Gagal mengambil data dari Firebase: ", error);
-                return [];
             }
         }
 
@@ -294,7 +312,7 @@
         ];
 
         async function muatDashboard() {
-            const semuaLaporan = await ambilDataLaporan();
+            const semuaLaporan = await window.ambilDataLaporan();
             document.getElementById("totalKasus").innerText = semuaLaporan.length + " Orang";
 
             let hitungPerDesa = {};
@@ -337,7 +355,7 @@
 
         async function bukaModalPetaSebaran() {
             document.getElementById("modalPetaSebaran").classList.remove("hidden");
-            const semuaLaporan = await ambilDataLaporan();
+            const semuaLaporan = await window.ambilDataLaporan();
 
             let defaultLat = -6.8775;
             let defaultLng = 113.5555;
@@ -416,7 +434,7 @@
         }
 
         async function eksekusiDownload() {
-            const semuaLaporan = await ambilDataLaporan();
+            const semuaLaporan = await window.ambilDataLaporan();
             const kategori = document.getElementById("pilihanKategoriDownload").value;
             let dataExport = semuaLaporan;
             let namaFile = "Laporan_Semua_Desa_Resti.xls";
