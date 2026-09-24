@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js CDN untuk Grafik -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet CSS untuk Peta Sebaran -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 </head>
 <body class="bg-emerald-50/50 font-sans min-h-screen flex flex-col justify-between">
 
@@ -93,7 +95,7 @@
                 </p>
             </div>
 
-            <!-- Statistik Total Kasus + Tombol Download -->
+            <!-- Statistik Total Kasus + Tombol Aksi (Download Excel & Peta Sebaran) -->
             <div class="bg-white p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="flex items-center space-x-4 w-full md:w-auto">
                     <div class="bg-emerald-100 text-emerald-700 p-4 rounded-2xl text-3xl">👩‍🍼</div>
@@ -103,10 +105,18 @@
                     </div>
                 </div>
                 
-                <button onclick="bukaModalDownload()" class="w-full md:w-auto bg-emerald-800 hover:bg-emerald-900 text-white font-medium py-3 px-5 rounded-xl text-sm transition shadow-md flex items-center justify-center space-x-2">
-                    <span>📥</span>
-                    <span>Download Data Kasus</span>
-                </button>
+                <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                    <!-- Tombol Peta Sebaran Pop-up -->
+                    <button onclick="bukaModalPetaSebaran()" class="bg-teal-700 hover:bg-teal-800 text-white font-medium py-3 px-4 rounded-xl text-sm transition shadow-md flex items-center justify-center space-x-2">
+                        <span>🗺️</span>
+                        <span>Lihat Peta Sebaran</span>
+                    </button>
+                    <!-- Tombol Download Excel -->
+                    <button onclick="bukaModalDownload()" class="bg-emerald-800 hover:bg-emerald-900 text-white font-medium py-3 px-4 rounded-xl text-sm transition shadow-md flex items-center justify-center space-x-2">
+                        <span>📥</span>
+                        <span>Download Excel</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Bagian Grafik Chart.js -->
@@ -134,6 +144,29 @@
 
     </main>
 
+    <!-- Modal Pop-up Peta Sebaran Pasien -->
+    <div id="modalPetaSebaran" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-3xl w-full p-6 md:p-8 shadow-2xl border border-emerald-100">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                <div class="flex items-center space-x-2">
+                    <span class="text-2xl">🗺️</span>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">Peta Sebaran Ibu Hamil Resti</h3>
+                        <p class="text-xs text-slate-500">Titik lokasi persebaran rumah pasien di wilayah kerja</p>
+                    </div>
+                </div>
+                <button onclick="tutupModalPetaSebaran()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+            </div>
+
+            <!-- Kontainer Peta -->
+            <div id="mapSebaran" class="w-full h-96 rounded-xl border border-slate-300 z-10 mb-4"></div>
+
+            <button type="button" onclick="tutupModalPetaSebaran()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 rounded-xl transition text-sm">
+                Tutup Peta
+            </button>
+        </div>
+    </div>
+
     <!-- Modal Pop-up Rincian Data Desa -->
     <div id="modalDetailDesa" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-2xl w-full p-6 md:p-8 shadow-2xl border border-emerald-100 max-h-[90vh] overflow-y-auto">
@@ -155,13 +188,13 @@
         </div>
     </div>
 
-    <!-- Modal Pop-up Pilihan Download Data -->
+    <!-- Modal Pop-up Pilihan Download Excel -->
     <div id="modalDownload" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-emerald-100">
             <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
                 <div class="flex items-center space-x-2">
                     <span class="text-2xl">📥</span>
-                    <h3 class="text-lg font-bold text-slate-800">Unduh Laporan Kasus</h3>
+                    <h3 class="text-lg font-bold text-slate-800">Unduh Laporan ke Excel</h3>
                 </div>
                 <button onclick="tutupModalDownload()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
             </div>
@@ -197,7 +230,7 @@
                     Batal
                 </button>
                 <button type="button" onclick="eksekusiDownload()" class="w-1/2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 rounded-xl transition text-sm shadow-md">
-                    Download File
+                    Download Excel
                 </button>
             </div>
         </div>
@@ -207,7 +240,10 @@
         &copy; 2026 PENITI BIDAN &bull; Puskesmas Pasongsongan.
     </footer>
 
-    <!-- Script Logika Perhitungan Otomatis Usia Kehamilan -->
+    <!-- Leaflet JS untuk Peta Sebaran -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Script Logika Dashboard & Peta Sebaran -->
     <script>
         function toggleMenu() {
             document.getElementById("hamburgerMenu").classList.toggle("hidden");
@@ -228,7 +264,6 @@
             const tglInput = new Date(item.tanggalInput);
             const tglSekarang = new Date();
             
-            // Selisih waktu dalam milidetik diubah ke minggu
             const selisihMilidetik = tglSekarang - tglInput;
             const mingguBerjalan = Math.floor(selisihMilidetik / (1000 * 60 * 60 * 24 * 7));
             
@@ -273,6 +308,8 @@
         }
 
         let myChart = null;
+        let mapSebaran = null;
+        let markersLayer = null;
         const daftarDesaResmi = [
             "DESA CAMPAKA", "DESA LEBENG TIMUR", "DESA LEBENG BARAT", 
             "DESA MONTORNA", "DESA PADANGDANGAN", "DESA PANAONGAN", 
@@ -329,6 +366,53 @@
                     }
                 }
             });
+        }
+
+        function bukaModalPetaSebaran() {
+            document.getElementById("modalPetaSebaran").classList.remove("hidden");
+            const semuaLaporan = ambilDataLaporan();
+
+            let defaultLat = -6.8775;
+            let defaultLng = 113.5555;
+
+            if (!mapSebaran) {
+                mapSebaran = L.map('mapSebaran').setView([defaultLat, defaultLng], 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(mapSebaran);
+
+                markersLayer = L.layerGroup().addTo(mapSebaran);
+            } else {
+                mapSebaran.invalidateSize();
+            }
+
+            markersLayer.clearLayers();
+
+            semuaLaporan.forEach(pasien => {
+                if (pasien.koordinatGPS && pasien.koordinatGPS !== "Tidak diisi" && pasien.koordinatGPS !== "Tidak diambil") {
+                    const parts = pasien.koordinatGPS.split(',');
+                    if (parts.length === 2) {
+                        const lat = parseFloat(parts[0].trim());
+                        const lng = parseFloat(parts[1].trim());
+                        if (!isNaN(lat) && !isNaN(lng)) {
+                            const popupContent = `
+                                <div class="text-xs space-y-1">
+                                    <p class="font-bold text-emerald-800">${pasien.nama}</p>
+                                    <p>Desa: ${pasien.desa} (${pasien.dusun})</p>
+                                    <p>Risiko: ${pasien.risiko}</p>
+                                </div>
+                            `;
+                            const marker = L.marker([lat, lng]).bindPopup(popupContent);
+                            markersLayer.addLayer(marker);
+                        }
+                    }
+                }
+            });
+        }
+
+        function tutupModalPetaSebaran() {
+            document.getElementById("modalPetaSebaran").classList.add("hidden");
         }
 
         function tampilkanDetailDesa(namaDesaResmi, semuaLaporan) {
@@ -389,17 +473,18 @@
             }
         }
 
+        // Fungsi Download Format Excel (.xls)
         function eksekusiDownload() {
             const semuaLaporan = ambilDataLaporan();
             const kategori = document.getElementById("pilihanKategoriDownload").value;
             
             let dataExport = semuaLaporan;
-            let namaFile = "Laporan_Semua_Desa_Resti.csv";
+            let namaFile = "Laporan_Semua_Desa_Resti.xls";
 
             if (kategori === "perdesa") {
                 const desaPilihan = document.getElementById("dropdownDesaDownload").value;
                 dataExport = semuaLaporan.filter(item => item.desa === desaPilihan);
-                namaFile = `Laporan_${desaPilihan.replace(/ /g, "_")}.csv`;
+                namaFile = `Laporan_${desaPilihan.replace(/ /g, "_")}.xls`;
             }
 
             if (dataExport.length === 0) {
@@ -407,37 +492,80 @@
                 return;
             }
 
-            let csvContent = "data:text/csv;charset=utf-8,No,Nama Ibu,NIK,Telepon,Usia,Usia Kehamilan Berjalan,Status Lahir,Desa,Dusun,Koordinat GPS,Faktor Risiko,Catatan\r\n";
-            
+            // Membuat struktur tabel HTML agar terbaca sempurna di Microsoft Excel
+            let htmlTable = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Laporan Resti Puskesmas</title>
+                    <style>
+                        table { border-collapse: collapse; width: 100%; }
+                        th, td { border: 1px solid #000000; padding: 8px; text-align: left; font-family: Arial, sans-serif; font-size: 11pt; }
+                        th { background-color: #047857; color: #ffffff; font-weight: bold; text-align: center; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Laporan Pendampingan Ibu Hamil Resti - Puskesmas Pasongsongan</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Ibu</th>
+                                <th>NIK</th>
+                                <th>Telepon</th>
+                                <th>Usia</th>
+                                <th>Usia Kehamilan Berjalan</th>
+                                <th>Status Lahir</th>
+                                <th>Desa</th>
+                                <th>Dusun</th>
+                                <th>Koordinat GPS</th>
+                                <th>Faktor Risiko</th>
+                                <th>Catatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
             dataExport.forEach((row, index) => {
                 const infoK = hitungUsiaKehamilanBerjalan(row);
-                let baris = [
-                    index + 1,
-                    `"${row.nama}"`,
-                    `"${row.nik}"`,
-                    `"${row.telepon}"`,
-                    row.usia,
-                    `"${infoK.teks}"`,
-                    infoK.statusLahir ? "Lahir" : "Dalam Pemantauan",
-                    `"${row.desa}"`,
-                    `"${row.dusun}"`,
-                    `"${row.koordinatGPS}"`,
-                    `"${row.risiko}"`,
-                    `"${row.catatan || '-'}"`
-                ];
-                csvContent += baris.join(",") + "\r\n";
+                htmlTable += `
+                    <tr>
+                        <td style="text-align: center;">${index + 1}</td>
+                        <td>${row.nama}</td>
+                        <td>'${row.nik}</td>
+                        <td>'${row.telepon}</td>
+                        <td style="text-align: center;">${row.usia}</td>
+                        <td>${infoK.teks}</td>
+                        <td>${infoK.statusLahir ? "Lahir" : "Dalam Pemantauan"}</td>
+                        <td>${row.desa}</td>
+                        <td>${row.dusun}</td>
+                        <td>${row.koordinatGPS}</td>
+                        <td>${row.risiko}</td>
+                        <td>${row.catatan || '-'}</td>
+                    </tr>
+                `;
             });
 
-            const encodedUri = encodeURI(csvContent);
+            htmlTable += `
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `;
+
+            // Proses download file berformat .xls
+            const blob = new Blob([htmlTable], { type: 'application/vnd.ms-excel' });
+            const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", namaFile);
+            link.href = url;
+            link.download = namaFile;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            URL.revokeObjectURL(url);
 
             tutupModalDownload();
-            alert("File laporan berhasil diunduh!");
+            alert("File laporan berhasil diunduh dalam format Excel!");
         }
     </script>
 </body>
