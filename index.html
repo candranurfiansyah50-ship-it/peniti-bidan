@@ -308,9 +308,12 @@
             };
 
             try {
-                console.log("Mengirim data ke koleksi laporanResti...", laporanBaru);
-                const docRef = await addDoc(collection(db, "laporanResti"), laporanBaru);
-                console.log("Berhasil disimpan dengan ID:", docRef.id);
+                console.log("Mencoba menghubungkan ke Firestore...");
+                const colRef = collection(db, "laporanResti");
+                console.log("Referensi koleksi didapat, mengirim data...", laporanBaru);
+                
+                const docRef = await addDoc(colRef, laporanBaru);
+                console.log("BERHASIL! ID Dokumen:", docRef.id);
 
                 alert("Berhasil! Laporan data ibu hamil Resti telah disimpan ke Firebase Database.");
                 
@@ -324,8 +327,8 @@
                     map.setView([-6.8775, 113.5555], 12);
                 }
             } catch (error) {
-                console.error("Gagal menyimpan ke Firebase: ", error);
-                alert("Gagal mengirim data ke database. Error: " + error.message);
+                console.error("GAGAL TOTAL MENYIMPAN KE FIREBASE:", error);
+                alert("Gagal mengirim data. Kode Error: " + error.code + " | Pesan: " + error.message);
             }
         };
     </script>
