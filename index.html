@@ -271,11 +271,25 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-    <!-- Hubungkan Firebase secara Global -->
+    <!-- Modul Utama Firebase yang Terhubung Langsung ke Tombol Kirim -->
     <script type="module">
         import { db, collection, addDoc } from "./firebase-config.js";
 
-        window.simpanKeFirebaseDatabase = async function(laporanBaru) {
+        window.kirimFinal = async function() {
+            const laporanBaru = {
+                tanggalInput: new Date().toISOString(),
+                nama: document.getElementById("nama").value,
+                nik: document.getElementById("nik").value,
+                telepon: document.getElementById("telepon").value,
+                usia: document.getElementById("usia").value,
+                usia_kehamilan_awal: parseInt(document.getElementById("usia_kehamilan").value),
+                desa: document.getElementById("pilihanDesa").value,
+                dusun: document.getElementById("pilihanDusun").value,
+                koordinatGPS: document.getElementById("koordinatGPS").value || "Tidak diisi",
+                risiko: Array.from(document.querySelectorAll('input[name="risiko"]:checked')).map(cb => cb.value).join(", ") || "Tidak ada indikator dicentang",
+                catatan: document.getElementById("catatan").value || "-"
+            };
+
             try {
                 await addDoc(collection(db, "laporanResti"), laporanBaru);
                 alert("Berhasil! Laporan data ibu hamil Resti telah disimpan ke Firebase Database.");
@@ -393,7 +407,7 @@
         function updateDusun() {
             const selectedDesa = document.getElementById("pilihanDesa").value;
             const dropdownDusun = document.getElementById("pilihanDusun");
-            dropdownDusun.innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
+            dropdownDusun.innerHTML = '<option value="">-- Pilih Dusun --</option>';
             if (selectedDesa && dataDusun[selectedDesa]) {
                 dataDusun[selectedDesa].forEach(dusun => {
                     const opt = document.createElement("option");
@@ -434,29 +448,6 @@
 
         function tutupKonfirmasi() {
             document.getElementById("modalKonfirmasi").classList.add("hidden");
-        }
-
-        // Fungsi Tombol Final Kirim Data
-        function kirimFinal() {
-            const laporanBaru = {
-                tanggalInput: new Date().toISOString(),
-                nama: document.getElementById("nama").value,
-                nik: document.getElementById("nik").value,
-                telepon: document.getElementById("telepon").value,
-                usia: document.getElementById("usia").value,
-                usia_kehamilan_awal: parseInt(document.getElementById("usia_kehamilan").value),
-                desa: document.getElementById("pilihanDesa").value,
-                dusun: document.getElementById("pilihanDusun").value,
-                koordinatGPS: document.getElementById("koordinatGPS").value || "Tidak diisi",
-                risiko: Array.from(document.querySelectorAll('input[name="risiko"]:checked')).map(cb => cb.value).join(", ") || "Tidak ada indikator dicentang",
-                catatan: document.getElementById("catatan").value || "-"
-            };
-
-            if (typeof window.simpanKeFirebaseDatabase === 'function') {
-                window.simpanKeFirebaseDatabase(laporanBaru);
-            } else {
-                alert("Koneksi database belum siap. Pastikan file 'firebase-config.js' berada di folder yang sama.");
-            }
         }
     </script>
 </body>
