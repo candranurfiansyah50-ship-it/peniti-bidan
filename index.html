@@ -271,27 +271,26 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-    <!-- Skrip Firebase & Pengiriman Data Terpadu -->
+    <!-- Skrip Firebase & Pengiriman Data Terpadu (Database Baru: penitibidan-8c3cb) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Konfigurasi Firebase Anda
+        // Konfigurasi Firebase Project Baru Anda
         const firebaseConfig = {
-            apiKey: "AIzaSyAs0-y2twWezIFzYwFEDLu6BPMFYC735u0",
-            authDomain: "penitibidanpasongsongan.firebaseapp.com",
-            projectId: "penitibidanpasongsongan",
-            storageBucket: "penitibidanpasongsongan.firebasestorage.app",
-            messagingSenderId: "665656505186",
-            appId: "1:665656505186:web:2aaaf4df493534604db23b",
-            measurementId: "G-R01CT4PX4W"
+            apiKey: "AIzaSyC_9UYUl3gxS7up8AazbBj1HYMWIuIn6R0",
+            authDomain: "penitibidan-8c3cb.firebaseapp.com",
+            projectId: "penitibidan-8c3cb",
+            storageBucket: "penitibidan-8c3cb.firebasestorage.app",
+            messagingSenderId: "195377000185",
+            appId: "1:195377000185:web:f3cf9fefea2fff24af7c28",
+            measurementId: "G-DJ1RP57D2Q"
         };
 
         // Inisialisasi Firebase & Firestore
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Fungsi kirimFinal ditarik ke dalam modul agar bisa mengakses db secara langsung
         window.kirimFinal = async function() {
             const laporanBaru = {
                 tanggalInput: new Date().toISOString(),
@@ -308,12 +307,9 @@
             };
 
             try {
-                console.log("Mencoba menghubungkan ke Firestore...");
-                const colRef = collection(db, "laporanResti");
-                console.log("Referensi koleksi didapat, mengirim data...", laporanBaru);
-                
-                const docRef = await addDoc(colRef, laporanBaru);
-                console.log("BERHASIL! ID Dokumen:", docRef.id);
+                console.log("Mengirim data ke koleksi laporanResti di project baru...", laporanBaru);
+                const docRef = await addDoc(collection(db, "laporanResti"), laporanBaru);
+                console.log("Berhasil disimpan dengan ID:", docRef.id);
 
                 alert("Berhasil! Laporan data ibu hamil Resti telah disimpan ke Firebase Database.");
                 
@@ -327,8 +323,8 @@
                     map.setView([-6.8775, 113.5555], 12);
                 }
             } catch (error) {
-                console.error("GAGAL TOTAL MENYIMPAN KE FIREBASE:", error);
-                alert("Gagal mengirim data. Kode Error: " + error.code + " | Pesan: " + error.message);
+                console.error("Gagal menyimpan ke Firebase: ", error);
+                alert("Gagal mengirim data ke database. Error: " + error.message);
             }
         };
     </script>
